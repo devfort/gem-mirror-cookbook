@@ -1,0 +1,10 @@
+#!upstart
+description "Update gem mirror"
+
+respawn
+
+env USER=<%= node.gem_mirror.user %>
+env HOME=/home/<%= node.gem_mirror.user %>
+env PATH=/opt/ruby/bin
+
+exec gem mirror
