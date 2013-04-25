@@ -24,8 +24,8 @@ end
 end
 
 service "gem-mirror" do
-    provider Chef::Provider::Service::Upstart
-    action :start
+  provider Chef::Provider::Service::Upstart
+  action :start
 end
 
 log "Started mirroring RubyGems; run `while true; do find #{node.gem_mirror.data_dir}/gems/ -maxdepth 1|wc -l; sleep 3; done` to monitor mirroring progress."
