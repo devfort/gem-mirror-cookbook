@@ -1,10 +1,19 @@
 #!upstart
 description "Update gem mirror"
 
+start on started gem-mirror-shim
+stop on stopping gem-mirror-shim
+
+task
 respawn
+
+setuid <%= node.gem_mirror.user %>
 
 env USER=<%= node.gem_mirror.user %>
 env HOME=/home/<%= node.gem_mirror.user %>
-env PATH=/opt/ruby/bin
 
-exec gem mirror
+pre-start script
+  . /etc/environment
+end script
+
+exec gem mirror -v

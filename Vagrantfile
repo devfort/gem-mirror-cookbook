@@ -3,11 +3,12 @@
 
 Vagrant.configure("2") do |config|
   config.vm.hostname = "gem-mirror-berkshelf"
-  config.vm.box = "npm-mirror"
+  config.vm.box = "packer-test-large"
   # TODO: Find a suitable basebox for Vagrant (we need dozens of gigs!)
   # TODO: VM box URL
   # config.vm.box_url = ""
 
+  config.omnibus.chef_version = :latest
   config.berkshelf.enabled = true
   config.vm.provision :chef_solo do |chef|
     chef.json = {

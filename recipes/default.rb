@@ -1,4 +1,5 @@
-chef_gem "rubygems-mirror"
+package "ruby1.9.1"
+gem_package "rubygems-mirror"
 
 [
   node.gem_mirror.data_dir,
@@ -14,6 +15,7 @@ end
 {
   "gem-mirrorrc.erb" => "/home/#{node.gem_mirror.user}/.gem/.mirrorrc",
   "services/gem-mirror.conf.erb" => "/etc/init/gem-mirror.conf",
+  "services/gem-mirror-shim.conf.erb" => "/etc/init/gem-mirror-shim.conf",
 }.each do |src, target|
   template target do
     source src
@@ -23,9 +25,9 @@ end
   end
 end
 
-service "gem-mirror" do
+service "gem-mirror-shim" do
   provider Chef::Provider::Service::Upstart
-  action :start
+  action :restart
 end
 
-log "Started mirroring RubyGems; run `while true; do find #{node.gem_mirror.data_dir}/gems/ -maxdepth 1|wc -l; sleep 3; done` to monitor mirroring progress."
+log "Started mirroring RubyGems; tail /var/log/upstart/gem-mirror.log to monitor."
