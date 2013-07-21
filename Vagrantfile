@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.hostname = "gem-mirror-berkshelf"
-  config.vm.box = "packer-test-large"
+  config.vm.box = "devfort-ubuntu-13.04-provisionerless-120gb"
   # TODO: Find a suitable basebox for Vagrant (we need dozens of gigs!)
   # TODO: VM box URL
   # config.vm.box_url = ""
