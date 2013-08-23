@@ -42,4 +42,10 @@ service "gem-mirror-shim" do
   action :restart
 end
 
+web_app "gem_mirror" do
+  docroot node.gem_mirror.data_dir
+  hostname node.gem_mirror.apache.listen_hostname
+  port node.gem_mirror.apache.listen_port
+end
+
 log "Started mirroring RubyGems; tail /var/log/upstart/gem-mirror.log to monitor."
