@@ -3,6 +3,7 @@ package "ruby1.9.1"
 package "git"
 gem_package "bundler"
 
+# Use @huacnlee/rubygems-mirror, per http://www.hackhowtofaq.com/blog/mirror-ruby-gems-locally/
 remote_file "/home/#{node.gem_mirror.user}/Gemfile" do
   source "https://raw.github.com/huacnlee/rubygems-mirror/master/Gemfile"
   owner node.gem_mirror.user
