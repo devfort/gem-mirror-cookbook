@@ -1,5 +1,17 @@
 package "ruby1.9.1"
-gem_package "rubygems-mirror"
+# package "ruby1.9.1-dev"
+# gem_package "builder"
+cookbook_file "#{Chef::Config[:file_cache_path]}/Gemfile" do
+  source "Gemfile"
+  owner node.gem_mirror.user
+  group node.gem_mirror.user
+  mode "0644"
+end
+
+bash "Install gems" do
+  command "bundle install"
+  code Chef::Config[:file_cache_path]
+end
 
 [
   node.gem_mirror.data_dir,
