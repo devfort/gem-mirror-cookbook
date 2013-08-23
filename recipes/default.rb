@@ -1,16 +1,24 @@
 package "ruby1.9.1"
-# package "ruby1.9.1-dev"
-# gem_package "builder"
-cookbook_file "#{Chef::Config[:file_cache_path]}/Gemfile" do
-  source "Gemfile"
+
+package "git"
+gem_package "bundler"
+
+remote_file "/home/#{node.gem_mirror.user}/Gemfile" do
+  source "https://raw.github.com/huacnlee/rubygems-mirror/master/Gemfile"
   owner node.gem_mirror.user
   group node.gem_mirror.user
   mode "0644"
 end
 
-bash "Install gems" do
-  command "bundle install"
-  code Chef::Config[:file_cache_path]
+ruby_block "include-bashrc-user" do
+  block do
+    file = Chef::Util::FileEdit.new("/home/#{node.gem_mirror.user}/Gemfile")
+    file.insert_line_if_no_match(
+      "gem 'rubygems-mirror'",
+      "gem 'rubygems-mirror', '0.0.0', :git => 'https://github.com/huacnlee/rubygems-mirror'"
+    )
+    file.write_file
+  end
 end
 
 [
