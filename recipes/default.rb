@@ -11,7 +11,7 @@ remote_file "/home/#{node.gem_mirror.user}/Gemfile" do
   mode "0644"
 end
 
-ruby_block "include-bashrc-user" do
+ruby_block "add-rubygems-mirror-to-gemfile" do
   block do
     file = Chef::Util::FileEdit.new("/home/#{node.gem_mirror.user}/Gemfile")
     file.insert_line_if_no_match(
