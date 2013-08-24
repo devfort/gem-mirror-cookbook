@@ -22,6 +22,11 @@ ruby_block "add-rubygems-mirror-to-gemfile" do
   end
 end
 
+bash "install-gem-mirror-dependencies" do
+  code "bundle install"
+  cwd "/home/#{node.gem_mirror.user}"
+end
+
 [
   node.gem_mirror.data_dir,
   "/home/#{node.gem_mirror.user}/.gem",

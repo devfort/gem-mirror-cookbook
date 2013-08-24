@@ -15,7 +15,6 @@ chdir /home/<%= node.gem_mirror.user %>
 
 pre-start script
   . /etc/environment
-  bundle install
 end script
 
 exec bundle exec gem mirror -v
