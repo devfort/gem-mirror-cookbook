@@ -5,3 +5,4 @@ default['gem_mirror']['apache']['listen_hostname'] = '*'
 default['gem_mirror']['apache']['listen_port'] = '80'
 
 override['apache']['default_site_enabled'] = false
+override[:rbenv][:group_users] = [node['gem_mirror']['user']]

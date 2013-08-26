@@ -1,7 +1,17 @@
-package "ruby1.9.1"
+# HACK: Fix git<1.8.4 on Ubuntu 13.04 (http://tickets.opscode.com/browse/CHEF-3940)
+directory "/root" do
+  mode "0755"
+end
 
-package "git"
-gem_package "bundler"
+# Install a trustworthy version of Ruby
+include_recipe "rbenv"
+include_recipe "rbenv::ruby_build"
+rbenv_ruby "1.9.3-p385" do
+  global true
+end
+rbenv_gem "bundler" do
+  ruby_version "1.9.3-p385"
+end
 
 # Use @huacnlee/rubygems-mirror, per http://www.hackhowtofaq.com/blog/mirror-ruby-gems-locally/
 remote_file "/home/#{node.gem_mirror.user}/Gemfile" do
@@ -16,15 +26,19 @@ ruby_block "add-rubygems-mirror-to-gemfile" do
     file = Chef::Util::FileEdit.new("/home/#{node.gem_mirror.user}/Gemfile")
     file.insert_line_if_no_match(
       "gem 'rubygems-mirror'",
-      "gem 'rubygems-mirror', '0.0.0', :git => 'https://github.com/huacnlee/rubygems-mirror'"
+      "gem 'rubygems-mirror', '0.0.0', :github => 'huacnlee/rubygems-mirror'"
     )
     file.write_file
   end
 end
 
-bash "install-gem-mirror-dependencies" do
+bash "install-gem-mirror" do
+  # TODO: Try command + nosudo
   code "bundle install"
+  user node.gem_mirror.user
+  group "sudo"
   cwd "/home/#{node.gem_mirror.user}"
+  environment 'HOME' => "/home/#{node.gem_mirror.user}"
 end
 
 [
@@ -56,6 +70,7 @@ service "gem-mirror-shim" do
   action :restart
 end
 
+# Serve the gems (when they finish mirroring)
 web_app "gem_mirror" do
   docroot node.gem_mirror.data_dir
   hostname node.gem_mirror.apache.listen_hostname
