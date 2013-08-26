@@ -14,13 +14,13 @@ rbenv_gem "bundler" do
 end
 
 # Use @huacnlee/rubygems-mirror, per http://www.hackhowtofaq.com/blog/mirror-ruby-gems-locally/
+# HACK: @huacnlee/rubygems-mirror isn't on rubygems, so install it with bundler
 remote_file "/home/#{node.gem_mirror.user}/Gemfile" do
   source "https://raw.github.com/huacnlee/rubygems-mirror/master/Gemfile"
   owner node.gem_mirror.user
   group node.gem_mirror.user
   mode "0644"
 end
-
 ruby_block "add-rubygems-mirror-to-gemfile" do
   block do
     file = Chef::Util::FileEdit.new("/home/#{node.gem_mirror.user}/Gemfile")
@@ -32,13 +32,10 @@ ruby_block "add-rubygems-mirror-to-gemfile" do
   end
 end
 
-bash "install-gem-mirror" do
-  # TODO: Try command + nosudo
-  code "bundle install"
-  user node.gem_mirror.user
-  group "sudo"
+# HACK: su to change user because script/execute doesn't set user (http://tickets.opscode.com/browse/CHEF-1523, via http://serverfault.com/questions/402881/execute-as-vagrant-user-not-root-with-chef-solo)
+execute "install-gem-mirror" do
+  command "su vagrant -l -c 'bundle install'"
   cwd "/home/#{node.gem_mirror.user}"
-  environment 'HOME' => "/home/#{node.gem_mirror.user}"
 end
 
 [
