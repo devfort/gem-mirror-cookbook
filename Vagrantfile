@@ -8,6 +8,8 @@ Vagrant.configure("2") do |config|
   # TODO: VM box URL
   # config.vm.box_url = ""
 
+  config.vm.network :forwarded_port, guest: 80, host: 8080
+
   config.omnibus.chef_version = :latest
   config.berkshelf.enabled = true
   config.vm.provision :chef_solo do |chef|

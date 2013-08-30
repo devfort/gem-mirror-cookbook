@@ -11,9 +11,6 @@ setuid <%= node.gem_mirror.user %>
 
 env USER=<%= node.gem_mirror.user %>
 env HOME=/home/<%= node.gem_mirror.user %>
+chdir /home/<%= node.gem_mirror.user %>/rubygems-mirror
 
-pre-start script
-  . /etc/environment
-end script
-
-exec gem mirror -v
+exec <%= node.rbenv.root %>/shims/bundle exec gem mirror -v
