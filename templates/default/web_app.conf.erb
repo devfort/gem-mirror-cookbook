@@ -1,4 +1,7 @@
-<VirtualHost <%= @params[:hostname] %>:<%= @params[:port] %>>
+NameVirtualHost *:<%= @params[:port] %>
+
+<VirtualHost *:<%= @params[:port] %>>
+  ServerName <%= @params[:hostname] %>
   DocumentRoot <%= @params[:docroot] %>
 
   <Directory <%= @params[:docroot] %>>

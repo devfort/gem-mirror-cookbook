@@ -13,7 +13,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       'gem_mirror' => {
-        'data_dir' => '/home/vagrant/rubygems',
         'user' => 'vagrant'
       }
     }

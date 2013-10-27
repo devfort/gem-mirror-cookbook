@@ -22,6 +22,7 @@ end
     owner node.gem_mirror.user
     group node.gem_mirror.user
     mode "0755"
+    recursive true
   end
 end
 
