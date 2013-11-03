@@ -12,6 +12,9 @@ Vagrant.configure("2") do |config|
   config.berkshelf.enabled = true
   config.vm.provision :chef_solo do |chef|
     chef.json = {
+      'apache' => {
+        'default_site_enabled' => false
+      },
       'gem_mirror' => {
         'user' => 'vagrant'
       }
