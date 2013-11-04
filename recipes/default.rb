@@ -14,7 +14,6 @@ rbenv_gem "bundler" do
 end
 
 [
-  node.gem_mirror.data_dir,
   "/home/#{node.gem_mirror.user}/.gem",
   "/home/#{node.gem_mirror.user}/rubygems-mirror",
 ].each do |dir|
@@ -50,29 +49,19 @@ execute "install-gem-mirror" do
   command "su #{node.gem_mirror.user} -lc 'cd /home/#{node.gem_mirror.user}/rubygems-mirror/ && bundle install'"
 end
 
-{
-  "gem-mirrorrc.erb" => "/home/#{node.gem_mirror.user}/.gem/.mirrorrc",
-  "services/gem-mirror.conf.erb" => "/etc/init/gem-mirror.conf",
-  "services/gem-mirror-shim.conf.erb" => "/etc/init/gem-mirror-shim.conf",
-}.each do |src, target|
-  template target do
-    source src
-    owner node.gem_mirror.user
-    group node.gem_mirror.user
-    mode "0644"
-  end
+template "/home/#{node.gem_mirror.user}/.gem/.mirrorrc" do
+  source "gem-mirrorrc.erb"
+  owner node.gem_mirror.user
+  group node.gem_mirror.user
+  mode "0644"
 end
 
-service "gem-mirror-shim" do
-  provider Chef::Provider::Service::Upstart
-  action :restart
-end
-
-# Serve the gems (when they finish mirroring)
-web_app "gem_mirror" do
-  docroot node.gem_mirror.data_dir
+mirror "gem" do
+  target node.gem_mirror.data_dir
+  user node.gem_mirror.user
   hostname node.gem_mirror.apache.listen_hostname
   port node.gem_mirror.apache.listen_port
+  cwd "/home/#{node.gem_mirror.user}/rubygems-mirror"
+  command "#{node.rbenv.root}/shims/bundle exec gem mirror -v"
+  cookbook "mirror-core"
 end
-
-log "Started mirroring RubyGems; tail /var/log/upstart/gem-mirror.log to monitor."
