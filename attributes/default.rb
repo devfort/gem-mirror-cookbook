@@ -4,3 +4,4 @@ default['gem_mirror']['remote'] = 'https://rubygems.org'
 
 default['gem_mirror']['apache']['listen_hostname'] = 'gem.fort'
 default['gem_mirror']['apache']['listen_port'] = '80'
+default['gem_mirror']['client_uri'] = 'http://gem.fort'
